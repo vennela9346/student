@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🎓 Student Management System</h1>
+        <p>Manage • Add • View • Delete</p>
+    </header>
+
+    <section class="card">
+        <h2>👤 Add Student</h2>
+        <div class="form">
+            <input id="name" placeholder="Student Name">
+            <input id="marks" type="number" placeholder="Marks (0-100)">
+            <input id="branch" placeholder="Branch (CSE, ECE)">
+            <input id="course" placeholder="Course (B.Tech)">
+        </div>
+        <button class="add" onclick="addStudent()">＋ Add Student</button>
+    </section>
+
+    <section class="card">
+        <h2>👥 Student Details</h2>
+        <p id="count">Total Students: 0</p>
+
+        <div class="table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Marks</th>
+                        <th>Branch</th>
+                        <th>Course</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="list"></tbody>
+            </table>
+        </div>
+
+        <button class="clear" onclick="clearAll()">🗑 Clear All</button>
+    </section>
+
+    <footer>💙 Keep Learning, Keep Growing!</footer>
+</div>
+
+<script>
+let students = JSON.parse(localStorage.getItem("students") || "[]");
+
+function showStudents() {
+    let list = document.getElementById("list");
+    list.innerHTML = "";
+
+    students.forEach((s, i) => {
+        list.innerHTML += `
+        <tr>
+            <td>${s.name}</td>
+            <td>${s.marks}</td>
+            <td>${s.branch}</td>
+            <td>${s.course}</td>
+            <td><button class="delete" onclick="deleteStudent(${i})">🗑 Delete</button></td>
+        </tr>`;
+    });
+
+    document.getElementById("count").innerText =
+        "Total Students: " + students.length;
+}
+
+function addStudent() {
+    let name = document.getElementById("name").value.trim();
+    let marks = document.getElementById("marks").value;
+    let branch = document.getElementById("branch").value.trim();
+    let course = document.getElementById("course").value.trim();
+
+    if (!name || marks === "" || !branch || !course) {
+        alert("Please fill all details!");
+        return;
+    }
+
+    if (+marks < 0 || +marks > 100) {
+        alert("Marks must be between 0 and 100!");
+        return;
+    }
+
+    students.push({name, marks, branch, course});
+    saveData();
+
+    document.querySelectorAll("input").forEach(input => input.value = "");
+}
+
+function deleteStudent(i) {
+    students.splice(i, 1);
+    saveData();
+}
+
+function clearAll() {
+    if (confirm("Delete all student details?")) {
+        students = [];
+        saveData();
+    }
+}
+
+function saveData() {
+    localStorage.setItem("students", JSON.stringify(students));
+    showStudents();
+}
+
+showStudents();
+</script>
+
+</body>
+</html>
